@@ -1,5 +1,8 @@
+# Data source: http://www.nasdaq.com/screening/company-list.aspx
+
 import csv
 import json
+from helper_functions import clean_ticker
 
 def read_csv():
     symbol_to_name = dict()
@@ -9,32 +12,29 @@ def read_csv():
     with open('NASDAQ_Company_List.csv', 'r') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            symbol_to_name[row['Symbol']] = row['Name']
-            name_to_symbol[row['Name']] = row['Symbol']
+            symbol_to_name[clean_ticker(row['Symbol'])] = row['Name']
+            name_to_symbol[row['Name']] = clean_ticker(row['Symbol'])
 
     # NYSE
     with open('NYSE_Company_List.csv', 'r') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            symbol_to_name[clean_symbol(row['Symbol'])] = row['Name']
-            name_to_symbol[row['Name']] = clean_symbol(row['Symbol'])
+            symbol_to_name[clean_ticker(row['Symbol'])] = row['Name']
+            name_to_symbol[row['Name']] = clean_ticker(row['Symbol'])
 
     # AMEX
     with open('AMEX_Company_List.csv', 'r') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            symbol_to_name[clean_symbol(row['Symbol'])] = row['Name']
-            name_to_symbol[row['Name']] = clean_symbol(row['Symbol'])
+            symbol_to_name[clean_ticker(row['Symbol'])] = row['Name']
+            name_to_symbol[row['Name']] = clean_ticker(row['Symbol'])
 
     return symbol_to_name, name_to_symbol
-
-def clean_symbol(s):
-    return s.replace("^", "-")
 
 def save_json(s, n):
     with open('symbols.json', 'w') as f:
         json.dump(s, f, sort_keys=True)
-       
+
     with open('names.json', 'w') as f:
         json.dump(n, f, sort_keys=True)
 
